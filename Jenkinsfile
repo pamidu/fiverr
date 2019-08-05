@@ -1,33 +1,34 @@
 def APPS = []
 pipeline {
+	agent any
     // If you are running jenkins in a container use "agent { docker { image 'docker:18.09.0-git' }}"
-    agent {
-        kubernetes {
-          label 'docker'
-          defaultContainer 'jnlp'
-          yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    app: jenkins-docker
-spec:
-  containers:
-  - name: docker
-    image: docker:18.09.0-git
-    command:
-    - cat
-    tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-"""
-        }
-    }
+//     agent {
+//         kubernetes {
+//           label 'docker'
+//           defaultContainer 'jnlp'
+//           yaml """
+// apiVersion: v1
+// kind: Pod
+// metadata:
+//   labels:
+//     app: jenkins-docker
+// spec:
+//   containers:
+//   - name: docker
+//     image: docker:18.09.0-git
+//     command:
+//     - cat
+//     tty: true
+//     volumeMounts:
+//     - mountPath: /var/run/docker.sock
+//       name: docker-sock
+//   volumes:
+//   - name: docker-sock
+//     hostPath:
+//       path: /var/run/docker.sock
+// """
+//         }
+//     }
 
     environment {
         GITHUB_HOOK_SECRET = "github-webhook-token-app-mono"
