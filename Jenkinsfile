@@ -1,51 +1,11 @@
-def APPS = []
 pipeline {
 	agent any
-    // If you are running jenkins in a container use "agent { docker { image 'docker:18.09.0-git' }}"
-//     agent {
-//         kubernetes {
-//           label 'docker'
-//           defaultContainer 'jnlp'
-//           yaml """
-// apiVersion: v1
-// kind: Pod
-// metadata:
-//   labels:
-//     app: jenkins-docker
-// spec:
-//   containers:
-//   - name: docker
-//     image: docker:18.09.0-git
-//     command:
-//     - cat
-//     tty: true
-//     volumeMounts:
-//     - mountPath: /var/run/docker.sock
-//       name: docker-sock
-//   volumes:
-//   - name: docker-sock
-//     hostPath:
-//       path: /var/run/docker.sock
-// """
-//         }
-//     }
-
-    environment {
-        GITHUB_HOOK_SECRET = "github-webhook-token-app-mono"
-        //DOCKERHUB = credentials('dockerhub-credentials')
+    environment {        //DOCKERHUB = credentials('dockerhub-credentials')
         DOCKERHUB_USR = "pamidu@live.com"
         DOCKERHUB_PSW = "Pol-19901222"
     }
 
     stages {
-        stage('configure webook') {
-            steps {
-                script {
-                    setupWebhook()
-	        }
-	    }
-        }
-
         stage('Find app name to build') {
             steps {
                 script {
@@ -95,22 +55,4 @@ pipeline {
             deleteDir()
         }
     }
-}
-
-def setupWebhook() {
-    properties([
-        pipelineTriggers([
-            [$class: 'GenericTrigger',
-                genericVariables: [
-                    [key: 'REF', value: '$.ref'],
-                ],
-                causeString: 'Triggered on github push',
-                token: env.GITHUB_HOOK_SECRET,
-                printContributedVariables: true,
-                printPostContent: true,
-                regexpFilterText: '$REF',
-                regexpFilterExpression: 'refs/heads/master'
-            ]
-        ])
-    ])
 }
